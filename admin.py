@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Gallery
+from .models import Category, Product, Gallery, Sizes, Colours
 # Register your models here.
 from django.utils.safestring import mark_safe
 
@@ -9,16 +9,24 @@ class GalleryInline(admin.TabularInline):
     model = Gallery
     extra = 1
 
+class ColoursInline(admin.TabularInline):
+    fk_name = 'product'
+    model = Gallery
+    extra = 1
+
+class SizesInline(admin.TabularInline):
+    fk_name = 'product'
+    model = Colours
+    extra = 1
+
 
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('pk', 'title', 'category', 'quantity', 'price', 'created_at', 'get_photo', 'get_photo_count')
     list_editable = ('price', 'quantity')
     list_display_links = ('title',)
-    inlines = [GalleryInline]
+    inlines = [GalleryInline, ColoursInline, SizesInline]
     list_filter = ('title', 'price')
     prepopulated_fields = {'slug': ('title',)}
-
-    # prepopulated_fields = {'slug': ('title',)}
 
     def get_photo(self, obj):
         if obj.images:
@@ -43,7 +51,7 @@ class ProductAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('title', 'get_products_count')
     prepopulated_fields = {'slug': ('title',)}
-    #prepopulated_fields = {'slug': ('title',)}
+   
 
     def get_products_count(self, obj):
         if obj.products:
