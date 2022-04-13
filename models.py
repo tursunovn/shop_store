@@ -71,7 +71,7 @@ class Gallery(models.Model):
 
 class Colours(models.Model):
     product = models.ForeignKey(Product, verbose_name='Товар', on_delete=models.CASCADE, related_name='colours')
-    colour = models.CharField(max_length=100, verbose_name='Название цвета', default='Золотой')
+    colour = models.CharField(max_length=100, verbose_name='Название цвета')
 
     def __str__(self):
         return self.colour
@@ -85,7 +85,7 @@ class Sizes(models.Model):
     size = models.IntegerField(verbose_name='Размер в мм', default=0)
 
     def __str__(self):
-        return self.size
+        return str(self.size)
 
     class Meta:
         verbose_name = 'Размер'
