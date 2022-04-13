@@ -51,7 +51,7 @@ class ProductAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ('title', 'get_products_count')
     prepopulated_fields = {'slug': ('title',)}
-   
+
 
     def get_products_count(self, obj):
         if obj.products:
