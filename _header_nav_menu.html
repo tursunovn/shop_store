@@ -1,11 +1,18 @@
+{% load store_tags %}
 <ul class="header_nav-menu d-flex justify-content-center flex-wrap text-center">
-    <li class="header_nav-item"><a class="header_nav-link "
-                                   href="pages/category_detail.html">WATCHES</a></li>
-    <!-- <li class="header_nav-item"><a class="header_nav-link" href="">BRACELETES</a></li> -->
-    <li class="header_nav-item"><a class="header_nav-link " href="">CHAINS</a></li>
-    <li class="header_nav-item"><a class="header_nav-link " href="">RINGS</a></li>
+    {% get_categories as categories %}
+    {% for category in categories %}
+    <li class="header_nav-item"><a class="header_nav-link " href="{{ category.get_absolute_url }}">{{ category.title|upper }}</a></li>
+    {% endfor %}
     <li class="header_nav-item mt-3 mt-lg-0"><a class="header_nav-link " href="">CONTACT</a>
     </li>
-    <li class="header_nav-item mt-3 mt-lg-0"><a class="header_nav-link " href="">SIGN UP</a>
+    <li class="header_nav-item mt-3 mt-lg-0">
+        {% if request.user.is_authenticated %}
+        <p class="header_nav-link">
+        {{ request.user.username|upper }}
+        </p>
+        {% else %}
+        <a class="header_nav-link " href="{% url 'login_registration' %}"> SIGN IN/ SIGN UP</a>
+        {% endif %}
     </li>
 </ul>
