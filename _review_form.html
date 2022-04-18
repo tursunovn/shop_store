@@ -1,0 +1,8 @@
+<div class="container">
+    <h3>Оставьте свой отзыв</h3>
+    <form action="{% url 'save_review' product.slug %}" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ review_form.text }}
+        <button class="btn btn-primary">Добавить отзыв</button>
+    </form>
+</div>
