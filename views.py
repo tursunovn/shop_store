@@ -1,8 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views.generic import ListView, DetailView
-from .models import Product, Category
+from .models import Product, Category, Review
 # Create your views here.
 from random import randint
+from .forms import LoginForm, RegistrationForm, ReviewForm
+from django.contrib.auth import login, logout
+from django.contrib import messages
 
 class ProductList(ListView):
     model = Product
@@ -69,5 +72,53 @@ class ProductDetail(DetailView):
                 data.append(product)
 
         context['products'] = data
+        context['reviews'] = Review.objects.filter(product__slug = self.kwargs['slug'])
+        if self.request.user.is_authenticated:
+            context['review_form'] = ReviewForm()
 
         return context
+
+def login_registration(request):
+    context = {
+        'login_form':LoginForm(),
+        'registration_form': RegistrationForm(),
+        'title': 'Войти или зарегистрироваться'
+    }
+    return render(request, 'store/login_registration.html', context)
+
+
+def user_login(request):
+    form = LoginForm(data=request.POST)
+    if form.is_valid():
+        user = form.get_user()
+        login(request, user)
+        return redirect('product_list')
+    else:
+        messages.error(request, 'Не верное имя пользователя или пароль')
+        return redirect('login_registration')
+
+
+def user_logout(request):
+    logout(request)
+    return redirect('product_list')
+
+def register(request):
+    form = RegistrationForm(data=request.POST)
+    if form.is_valid():
+        user = form.save()
+        messages.success(request, 'Отлично! Вы зарегитсрировались! Войдите в аакаунт!')
+    else:
+        messages.error(request, 'Что-то пошло не так')
+    return redirect('login_registration')
+
+def save_review(request, product_slug):
+    form = ReviewForm(data=request.POST)
+    if form.is_valid():
+        review = form.save(commit=False)
+        review.author = request.user
+        product = Product.objects.get(slug=product_slug)
+        review.product = product
+        review.save()
+    else:
+        pass
+    return redirect('product_detail', product_slug)
