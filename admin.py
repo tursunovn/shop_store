@@ -1,5 +1,5 @@
 from django.contrib import admin
-from .models import Category, Product, Gallery, Sizes, Colours
+from .models import Category, Product, Gallery, Sizes, Colours, Review
 # Register your models here.
 from django.utils.safestring import mark_safe
 
@@ -21,8 +21,12 @@ class SizesInline(admin.TabularInline):
 
 
 class ProductAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'title', 'category', 'quantity', 'price', 'created_at', 'get_photo', 'get_photo_count')
-    list_editable = ('price', 'quantity')
+    list_display = ('pk', 'title',
+                    'category', 'quantity',
+                    'price', 'created_at',
+                    'get_photo', 'get_photo_count',
+                    'size', 'colour')
+    list_editable = ('price', 'quantity', 'size', 'colour')
     list_display_links = ('title',)
     inlines = [GalleryInline, ColoursInline, SizesInline]
     list_filter = ('title', 'price')
@@ -61,6 +65,13 @@ class CategoryAdmin(admin.ModelAdmin):
 
     get_products_count.short_description = 'Количество товаров'
 
+class ReviewAdmin(admin.ModelAdmin):
+    list_display = ('pk', 'author', 'text', 'created_at')
+    list_display_links = ('pk',)
+    readonly_fields = ('author', 'product', 'text', 'created_at')
+
+
 
 admin.site.register(Category, CategoryAdmin)
 admin.site.register(Product, ProductAdmin)
+admin.site.register(Review, ReviewAdmin)
