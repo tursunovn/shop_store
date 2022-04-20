@@ -1,5 +1,6 @@
 from django.db import models
 from django.urls import reverse
+from django.contrib.auth.models import User
 
 
 # Create your models here.
@@ -35,6 +36,8 @@ class Product(models.Model):
                                  verbose_name='Категория',
                                  related_name='products')
     slug = models.SlugField(unique=True, null=True)
+    size = models.IntegerField(default=30, verbose_name='Размеры в мм')
+    colour = models.CharField(max_length=30, default='Сталь', verbose_name='Цвет')
 
     def get_absolute_url(self):
         return reverse('product_detail', kwargs={'slug': self.slug})
@@ -91,3 +94,21 @@ class Sizes(models.Model):
         verbose_name = 'Размер'
         verbose_name_plural = 'Варианты размеров'
 
+
+class Review(models.Model):
+    text = models.TextField(verbose_name='Текст комметария')
+    author = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Автор')
+    product = models.ForeignKey(Product, on_delete=models.CASCADE,verbose_name='Товар')
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name='Дата добавления')
+
+    class Meta:
+        verbose_name = 'Отзыв'
+        verbose_name_plural = 'Отзывы'
+
+
+class Mail(models.Model):
+    mail = models.EmailField(unique=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE, blank=True, null=True)
+
+    def __str__(self):
+        return self.mail
