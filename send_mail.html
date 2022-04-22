@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block header_text %}
+{% endblock header_text %}
+
+<!-- HEADER TEXT BLOCK END -->
+{% block header_poster %}
+{% endblock header_poster %}
+
+{% block main %}
+{% if request.user.is_superuser %}
+<form action="" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    <textarea class="form-control" name="text" id="" cols="30" rows="10">
+
+    </textarea>
+    <button type="submit" class="btn btn-primary">Отправить всем</button>
+
+</form>
+{% endif %}
+{% endblock main %}
